@@ -1,0 +1,11 @@
+#!/bin/bash
+set -e
+
+IMAGE="progrium/buildstep"
+
+CMD="apt-get update -y --force-yes && apt-get -y --force-yes install software-properties-common python-software-properties && add-apt-repository -y ppa:mc3man/trusty-media && apt-get -y --force-yes update && apt-get -y --force-yes dist-upgrade && apt-get -y --force-yes install ffmpeg && apt-get install -y --force-yes libsndfile1-dev && rm -rf /var/lib/apt/lists/*"
+
+ID=$(docker run -d $IMAGE /bin/sh -c "$CMD")
+docker attach $ID
+test $(docker wait $ID) -eq 0
+docker commit $ID $IMAGE > /dev/null
